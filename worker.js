@@ -35,6 +35,7 @@ bus.on('account-create', function (e) {
         memberships: [account.membership]
     });
 
+    debug(account);
     user.save(function (err) {
         if (err) {
             debug(err);
@@ -47,12 +48,14 @@ bus.on('account-create', function (e) {
 
 bus.on('account-delete', function (e) {
     var account = e.account;
+    debug(account);
     User.remove({_id: account.id}, function (err) {
         if (err) {
             debug(err);
             return e.message.requeue();
         }
 
+        debug(arguments);
         e.message.finish();
     });
 });
