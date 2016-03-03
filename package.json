@@ -1,6 +1,6 @@
 {
   "name": "clickberry-user-admin-service",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "worker.js",
   "description": "User admin worker micro-service on Node.js",
   "scripts": {

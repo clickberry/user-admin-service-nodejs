@@ -57,6 +57,7 @@ bus.on('account-delete', function (e) {
         }
 
         if (arg.result.n === 0) {
+            debug(arg.result);
             return e.message.requeue(MSG_DELAY);
         }
 
