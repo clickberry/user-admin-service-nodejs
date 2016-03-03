@@ -3,6 +3,7 @@
     "connection": "mongodb://localhost/admindb"
   },
   "nsqlookupd": {
-    "addresses": "192.168.99.100:4161"
+    "addresses": "192.168.99.100:4161",
+    "msgDelay": "30"
   }
 }

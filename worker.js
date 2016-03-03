@@ -25,6 +25,8 @@ var options = {
 };
 mongoose.connect(config.get('mongodb:connection'), options);
 
+var MSG_DELAY = config.getInt('nsqlookupd:msgDelay', 30);
+
 bus.on('account-create', function (e) {
     var account = e.account;
     var user = new User({
@@ -35,11 +37,10 @@ bus.on('account-create', function (e) {
         memberships: [account.membership]
     });
 
-    debug(account);
     user.save(function (err) {
         if (err) {
             debug(err);
-            return e.message.requeue();
+            return e.message.requeue(MSG_DELAY);
         }
 
         e.message.finish();
@@ -48,14 +49,17 @@ bus.on('account-create', function (e) {
 
 bus.on('account-delete', function (e) {
     var account = e.account;
-    debug(account);
-    User.remove({_id: account.id}, function (err) {
+
+    User.remove({_id: account.id}, function (err, arg) {
         if (err) {
             debug(err);
-            return e.message.requeue();
+            return e.message.requeue(MSG_DELAY);
         }
 
-        debug(arguments);
+        if (arg.result.n === 0) {
+            return e.message.requeue(MSG_DELAY);
+        }
+
         e.message.finish();
     });
 });
@@ -67,7 +71,7 @@ bus.on('account-merge', function (e) {
     User.findById(merges.toUserId, function (err, toUser) {
         if (err) {
             debug(err);
-            return e.message.requeue();
+            return e.message.requeue(MSG_DELAY);
         }
 
         if (!toUser) {
@@ -78,7 +82,7 @@ bus.on('account-merge', function (e) {
         User.findById(merges.fromUserId, function (err, formUser) {
             if (err) {
                 debug(err);
-                return e.message.requeue();
+                return e.message.requeue(MSG_DELAY);
             }
 
             if (!formUser) {
@@ -91,13 +95,13 @@ bus.on('account-merge', function (e) {
             toUser.save(function (err) {
                 if (err) {
                     debug(err);
-                    return e.message.requeue();
+                    return e.message.requeue(MSG_DELAY);
                 }
 
                 formUser.remove(function (err) {
                     if (err) {
                         debug(err);
-                        return e.message.requeue();
+                        return e.message.requeue(MSG_DELAY);
                     }
 
                     return e.message.finish();
@@ -124,7 +128,7 @@ bus.on('account-unmerge', function (e) {
         function (err) {
             if (err) {
                 debug(err);
-                return e.message.requeue();
+                return e.message.requeue(MSG_DELAY);
             }
 
             e.message.finish();
@@ -140,7 +144,7 @@ bus.on('video-create', function (e) {
         function (err) {
             if (err) {
                 debug(err);
-                return e.message.requeue();
+                return e.message.requeue(MSG_DELAY);
             }
 
             e.message.finish();
@@ -155,7 +159,7 @@ bus.on('video-delete', function (e) {
         function (err) {
             if (err) {
                 debug(err);
-                return e.message.requeue();
+                return e.message.requeue(MSG_DELAY);
             }
 
             e.message.finish();
