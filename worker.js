@@ -137,26 +137,11 @@ bus.on('account-unmerge', function (e) {
 });
 
 
-bus.on('video-create', function (e) {
-    var video = e.video;
+bus.on('video-storage-update', function (e) {
+    var storageSpace = e.storageSpace;
     User.findByIdAndUpdate(
-        video.userId,
-        {$inc: {storageUsed: video.size}},
-        function (err) {
-            if (err) {
-                debug(err);
-                return e.message.requeue(MSG_DELAY);
-            }
-
-            e.message.finish();
-        });
-});
-
-bus.on('video-delete', function (e) {
-    var video = e.video;
-    User.findByIdAndUpdate(
-        video.userId,
-        {$inc: {storageUsed: -video.size}},
+        storageSpace.userId,
+        {storageUsed: storageSpace.used},
         function (err) {
             if (err) {
                 debug(err);
