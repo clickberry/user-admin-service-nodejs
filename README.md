@@ -34,6 +34,7 @@ video-creates | user-admin | {id: *video_id*, userId: *user_id*, size: *video_si
 video-deletes | user-admin | {videoId: *videoId*} | Updates aggregated user data
 account-creates | user-admin | { id: *user_id*, role: *user_role*, created: *user_created_date*, membership: { id: *id*, provider: *authentication_provider*, email: *user_email*, name: *user_name* } } | Creates aggregated user data
 account-deletes | user-admin | { id: *user_id* } | Deletes aggregated user data
+profile-updates | user-admin | { id: *user_id*, name: *user_name*, avatarUrl: *avatar_url* } | Updates aggregated user data
 
 # License
 Source code is under GNU GPL v3 [license](LICENSE).
