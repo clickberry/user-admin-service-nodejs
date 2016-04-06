@@ -139,7 +139,7 @@ bus.on('account-unmerge', function (e) {
 
 bus.on('video-storage-update', function (e) {
     var storageSpace = e.storageSpace;
-    User.findByIdAndUpdate(
+    User.update(
         storageSpace.userId,
         {storageUsed: storageSpace.used},
         function (err) {
@@ -150,6 +150,22 @@ bus.on('video-storage-update', function (e) {
 
             e.message.finish();
         });
+});
+
+bus.on('profile-update', function (e) {
+    var profile= e.profile;
+    User.update(
+        {_id:profile.id},
+        {'profile.name': profile.name, 'profile.avatarUrl': profile.avatarUrl},
+        function(err){
+            if(err){
+                debug(err);
+                return e.message.requeue(MSG_DELAY);
+            }
+
+            e.message.finish();
+        }
+    );
 });
 
 debug('Listening for messages...');

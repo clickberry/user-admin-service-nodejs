@@ -6,6 +6,10 @@ var userSchema = new Schema({
     role: String,
     created: Date,
     storageUsed: Number,
+    profile: new Schema({
+        name: String,
+        avatarUrl: String
+    }, {_id: false}),
     memberships: [new Schema({
         id: String,
         provider: String,
